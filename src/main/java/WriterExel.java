@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class WriterExel {
     public static void main(String[] args) throws IOException, InterruptedException {
         Match match = new Match();
         Parser parser = new Parser();
-        int i=1380660295;
+        int i=1380660324;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Players");
@@ -56,9 +57,12 @@ public class WriterExel {
         cell.setCellValue("Забил?");
         cell.setCellStyle(style);
 
-        while (i<1380660407) {
+        while (i<=1380660324) {
             Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
-                    .proxy("chr-proxy.severstal.severstalgroup.com", 8080).get();
+                    .get();
+
+            doc.getElementsByClass("b-match__assists-right-block").remove();
+            doc.getElementsByClass("b-match__assists-left-block").remove();
 
             match.setHomeTeam(parser.parseHomeTeam(doc));
             match.setHostTeam(parser.parseHostTeam(doc));

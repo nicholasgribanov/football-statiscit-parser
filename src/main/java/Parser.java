@@ -76,14 +76,14 @@ public class Parser {
     public List<String> parseScoredPlayerHome(Document doc){
         return doc.body().getElementsByClass("b-match__side b-match__side_left match_events_left")
                 .first()
-                .getElementsByClass("b-match__goals").tagName("a").eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
+                .getElementsByClass("b-match__video-link").tagName("a").eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
 
     }
 
     public List<String> parseScoredPlayerHost(Document doc){
         return doc.body().getElementsByClass("b-match__side b-match__side_right match_events_right")
                 .first()
-                .getElementsByClass("b-match__goals").tagName("a").eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
+                .getElementsByClass("b-match__video-link").tagName("a").eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
 
     }
 
