@@ -5,7 +5,7 @@ public class Player {
     private Match match;
     private Team team;
     private String name;
-    private Position position;
+    private String position;
     private boolean isSub;
     private boolean isScored;
 
@@ -37,11 +37,11 @@ public class Player {
         this.name = name;
     }
 
-    public Position getPosition() {
+    public String getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(String position) {
         this.position = position;
     }
 

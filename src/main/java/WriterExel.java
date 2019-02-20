@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 
 import java.io.File;
@@ -15,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class WriterExel {
@@ -64,6 +64,9 @@ public class WriterExel {
             doc.getElementsByClass("b-match__assists-right-block").remove();
             doc.getElementsByClass("b-match__assists-left-block").remove();
 
+            List<String> playersInfoHome = parser.getFullPlayersInfoHome(doc);
+            List<String> playersInfoHost = parser.getFullPlayersInfoHost(doc);
+
             match.setHomeTeam(parser.parseHomeTeam(doc));
             match.setHostTeam(parser.parseHostTeam(doc));
             match.setResult(parser.parseResult(doc));
@@ -80,6 +83,7 @@ public class WriterExel {
                 player.setMatch(match);
                 player.setTeam(new Team(match.getHomeTeam()));
                 player.setScored(homePlayersScored);
+                playersInfoHome.stream().filter(info->info.contains(player.getName())).findFirst().ifPresent(info1->player.setPosition(info1.substring(info1.length()-1)));
                 player.setSub(homeSubIn);
             });
 
@@ -95,6 +99,7 @@ public class WriterExel {
                 player.setMatch(match);
                 player.setTeam(new Team(match.getHostTeam()));
                 player.setScored(hostPlayersScored);
+                playersInfoHost.stream().filter(info->info.contains(player.getName())).findFirst().ifPresent(info1->player.setPosition(info1.substring(0,1)));
                 player.setSub(hostSubIn);
             });
 
@@ -117,7 +122,7 @@ public class WriterExel {
                 cell.setCellValue(player.getName());
 
                 cell = row.createCell(3, CellType.STRING);
-                cell.setCellValue("");
+                cell.setCellValue(player.getPosition());
 
                 cell = row.createCell(4, CellType.STRING);
                 cell.setCellValue(player.isSub() ? "ДА" : "НЕТ");

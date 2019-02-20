@@ -72,6 +72,16 @@ public class Parser {
         return playersAndCoach.get(playersAndCoach.size() - 1);
     }
 
+    public   List<String> getFullPlayersInfoHome(Document doc) {
+        return doc.body().getElementsByClass("b-teams__side-left").first().getElementsByClass("b-teams__string")
+                .eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
+    }
+
+    public   List<String> getFullPlayersInfoHost(Document doc) {
+        return doc.body().getElementsByClass("b-teams__side-right").first().getElementsByClass("b-teams__string")
+                .eachText().stream().map(Parser::alphabeticOnlyString).collect(Collectors.toList());
+    }
+
     //SCORED PLAYERS
     public List<String> parseScoredPlayerHome(Document doc){
         return doc.body().getElementsByClass("b-match__side b-match__side_left match_events_left")
