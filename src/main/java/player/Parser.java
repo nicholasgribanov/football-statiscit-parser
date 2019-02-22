@@ -1,3 +1,5 @@
+package player;
+
 import org.jsoup.nodes.Document;
 
 import java.util.List;

@@ -1,3 +1,5 @@
+package player;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -14,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class WriterExel {
@@ -26,13 +27,14 @@ public class WriterExel {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Players");
 
-        int rownum = 0;
-        Cell cell;
-        Row row;
+
+
+
         HSSFCellStyle style = createStyleForTitle(workbook);
-
+        int rownum = 0;
+        Row row;
         row = sheet.createRow(rownum);
-
+        Cell cell;
         cell = row.createCell(0, CellType.STRING);
         cell.setCellValue("Матч");
         cell.setCellStyle(style);
@@ -59,7 +61,9 @@ public class WriterExel {
 
         while (i<=1380660324) {
             Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
-                    .get();
+                    .proxy("chr-proxy.severstal.severstalgroup.com", 8080).get();
+
+
 
             doc.getElementsByClass("b-match__assists-right-block").remove();
             doc.getElementsByClass("b-match__assists-left-block").remove();
@@ -136,7 +140,7 @@ public class WriterExel {
         }
 
 
-        File file = new File("C:/demo/Players.xls");
+        File file = new File("C:/demo/Players.xlsx");
         file.getParentFile().mkdirs();
         FileOutputStream outFile = new FileOutputStream(file);
         workbook.write(outFile);
