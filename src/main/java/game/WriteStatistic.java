@@ -48,7 +48,7 @@ public class WriteStatistic {
         cell[0].setCellStyle(style);
 
         cell[0] = row[0].createCell(3, CellType.STRING);
-        cell[0].setCellValue("Забитые правой ногой");
+        cell[0].setCellValue("забитые правой ногой");
         cell[0].setCellStyle(style);
 
         cell[0] = row[0].createCell(4, CellType.STRING);
@@ -150,9 +150,13 @@ public class WriteStatistic {
         cell[0].setCellValue("нарушения");
         cell[0].setCellStyle(style);
 
+        cell[0] = row[0].createCell(29, CellType.STRING);
+        cell[0].setCellValue("Удаления");
+        cell[0].setCellStyle(style);
+
         while (i <= 1380660350) {
             Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
-                    .get();
+                   .get();
 
 
             match.setHomeTeam(parser.parseHomeTeam(doc));
