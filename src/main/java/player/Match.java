@@ -1,8 +1,12 @@
+package player;
+
+import game.GameStatisctic;
 
 public class Match {
     private String homeTeam;
     private String hostTeam;
     private String result;
+    private GameStatisctic gameStatisctic;
 
 
     public String getHomeTeam() {
@@ -33,5 +37,13 @@ public class Match {
     @Override
     public String toString() {
         return homeTeam + " " + result + " " + hostTeam;
+    }
+
+    public GameStatisctic getGameStatisctic() {
+        return gameStatisctic;
+    }
+
+    public void setGameStatisctic(GameStatisctic gameStatisctic) {
+        this.gameStatisctic = gameStatisctic;
     }
 }

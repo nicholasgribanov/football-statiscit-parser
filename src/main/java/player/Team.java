@@ -1,3 +1,5 @@
+package player;
+
 public class Team {
     private String name;
 
