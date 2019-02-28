@@ -37,6 +37,14 @@ public class Parser {
                 .text();
     }
 
+    public String parseDateOfMatch(Document doc) {
+        return doc
+                .body()
+                .getElementsByClass("match_count_date")
+                .first()
+                .text();
+    }
+
     //PLAYERS
     public List<String> parseHomeStartPlayers(Document doc) {
         return doc.body().getElementsByClass("b-field__zona left").first().getElementsByClass("igrok")

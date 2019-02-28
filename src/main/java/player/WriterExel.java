@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -22,12 +23,10 @@ public class WriterExel {
     public static void main(String[] args) throws IOException, InterruptedException {
         Match match = new Match();
         Parser parser = new Parser();
-        int i=1380660324;
+        int i = 1380548325;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Players");
-
-
 
 
         HSSFCellStyle style = createStyleForTitle(workbook);
@@ -36,33 +35,38 @@ public class WriterExel {
         row = sheet.createRow(rownum);
         Cell cell;
         cell = row.createCell(0, CellType.STRING);
-        cell.setCellValue("Матч");
+        cell.setCellValue("Дата");
         cell.setCellStyle(style);
 
         cell = row.createCell(1, CellType.STRING);
-        cell.setCellValue("Команда");
+        cell.setCellValue("Матч");
         cell.setCellStyle(style);
 
         cell = row.createCell(2, CellType.STRING);
-        cell.setCellValue("Игрок");
+        cell.setCellValue("Команда");
         cell.setCellStyle(style);
 
         cell = row.createCell(3, CellType.STRING);
-        cell.setCellValue("Позиция");
+        cell.setCellValue("Игрок");
         cell.setCellStyle(style);
 
         cell = row.createCell(4, CellType.STRING);
-        cell.setCellValue("Запасной?");
+        cell.setCellValue("Позиция");
         cell.setCellStyle(style);
 
         cell = row.createCell(5, CellType.STRING);
+        cell.setCellValue("Запасной?");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(6, CellType.STRING);
         cell.setCellValue("Забил?");
         cell.setCellStyle(style);
 
-        while (i<=1380660324) {
-            Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
-                    .proxy("chr-proxy.severstal.severstalgroup.com", 8080).get();
-
+        int count = 0;
+        while (i <= 1380550640) {
+            try {
+            Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_11481/game_" + i)
+                    .get();
 
 
             doc.getElementsByClass("b-match__assists-right-block").remove();
@@ -74,6 +78,7 @@ public class WriterExel {
             match.setHomeTeam(parser.parseHomeTeam(doc));
             match.setHostTeam(parser.parseHostTeam(doc));
             match.setResult(parser.parseResult(doc));
+            match.setMatchDate(parser.parseDateOfMatch(doc));
 
             List<String> listOfPlayersHome = parser.parseHomeStartPlayers(doc);
             List<String> homePlayersScored = parser.parseScoredPlayerHome(doc);
@@ -87,7 +92,7 @@ public class WriterExel {
                 player.setMatch(match);
                 player.setTeam(new Team(match.getHomeTeam()));
                 player.setScored(homePlayersScored);
-                playersInfoHome.stream().filter(info->info.contains(player.getName())).findFirst().ifPresent(info1->player.setPosition(info1.substring(info1.length()-1)));
+                playersInfoHome.stream().filter(info -> info.contains(player.getName())).findFirst().ifPresent(info1 -> player.setPosition(info1.substring(info1.length() - 1)));
                 player.setSub(homeSubIn);
             });
 
@@ -103,11 +108,9 @@ public class WriterExel {
                 player.setMatch(match);
                 player.setTeam(new Team(match.getHostTeam()));
                 player.setScored(hostPlayersScored);
-                playersInfoHost.stream().filter(info->info.contains(player.getName())).findFirst().ifPresent(info1->player.setPosition(info1.substring(0,1)));
+                playersInfoHost.stream().filter(info -> info.contains(player.getName())).findFirst().ifPresent(info1 -> player.setPosition(info1.substring(0, 1)));
                 player.setSub(hostSubIn);
             });
-
-
 
 
             List<Player> allPlayers = new ArrayList<>();
@@ -117,30 +120,44 @@ public class WriterExel {
                 rownum++;
                 row = sheet.createRow(rownum);
                 cell = row.createCell(0, CellType.STRING);
-                cell.setCellValue(player.getMatch().toString());
+                cell.setCellValue(player.getMatch().getMatchDate());
 
                 cell = row.createCell(1, CellType.STRING);
-                cell.setCellValue(player.getTeam().getName());
+                cell.setCellValue(player.getMatch().toString());
 
                 cell = row.createCell(2, CellType.STRING);
-                cell.setCellValue(player.getName());
+                cell.setCellValue(player.getTeam().getName());
 
                 cell = row.createCell(3, CellType.STRING);
-                cell.setCellValue(player.getPosition());
+                cell.setCellValue(player.getName());
 
                 cell = row.createCell(4, CellType.STRING);
-                cell.setCellValue(player.isSub() ? "ДА" : "НЕТ");
+                cell.setCellValue(player.getPosition());
 
                 cell = row.createCell(5, CellType.STRING);
+                cell.setCellValue(player.isSub() ? "ДА" : "НЕТ");
+
+                cell = row.createCell(6, CellType.STRING);
                 cell.setCellValue(player.isScored() ? "ДА" : "НЕТ");
 
 
             }
-            i++;
+            System.out.println("Parsed " + i+ " : " + ++count);
+            if ( i== 1380660414)
+                i += 2;
+            else
+                i++;
+            } catch (HttpStatusException e) {
+                System.out.println("Page " + i + " not found. Try next");
+                i++;
+            } catch (Exception e) {
+                System.out.println("Something wrong with " + i);
+                i++;
+            }
         }
 
 
-        File file = new File("C:/demo/Players.xlsx");
+        File file = new File("/Users/nicholasg/Players.xls");
         file.getParentFile().mkdirs();
         FileOutputStream outFile = new FileOutputStream(file);
         workbook.write(outFile);

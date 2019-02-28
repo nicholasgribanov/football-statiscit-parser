@@ -7,6 +7,7 @@ public class Match {
     private String hostTeam;
     private String result;
     private GameStatisctic gameStatisctic;
+    private String matchDate;
 
 
     public String getHomeTeam() {
@@ -45,5 +46,13 @@ public class Match {
 
     public void setGameStatisctic(GameStatisctic gameStatisctic) {
         this.gameStatisctic = gameStatisctic;
+    }
+
+    public String getMatchDate() {
+        return matchDate;
+    }
+
+    public void setMatchDate(String matchDate) {
+        this.matchDate = matchDate;
     }
 }
