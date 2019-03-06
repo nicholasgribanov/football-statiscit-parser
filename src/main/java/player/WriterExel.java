@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import xls.DocumentXls;
 
 
 import java.io.File;
@@ -30,38 +31,12 @@ public class WriterExel {
         HSSFSheet sheet = workbook.createSheet("Players");
 
 
-        HSSFCellStyle style = createStyleForTitle(workbook);
+        HSSFCellStyle style = DocumentXls.createStyleForTitle(workbook);
         int rownum = 0;
         Row row;
         row = sheet.createRow(rownum);
         Cell cell;
-        cell = row.createCell(0, CellType.STRING);
-        cell.setCellValue("Дата");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(1, CellType.STRING);
-        cell.setCellValue("Матч");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(2, CellType.STRING);
-        cell.setCellValue("Команда");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(3, CellType.STRING);
-        cell.setCellValue("Игрок");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(4, CellType.STRING);
-        cell.setCellValue("Позиция");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(5, CellType.STRING);
-        cell.setCellValue("Запасной?");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(6, CellType.STRING);
-        cell.setCellValue("Забил?");
-        cell.setCellStyle(style);
+        DocumentXls.generateDocumentHeader(style,row,"Дата","Матч","Команда","Игрок","Позиция","Запасной?","Забил?");
 
         int count = 0;
         while (i <= 1380660431) {
@@ -181,12 +156,4 @@ public class WriterExel {
         System.out.println("Created file: " + file.getAbsolutePath());
     }
 
-
-    public static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        return style;
-    }
 }

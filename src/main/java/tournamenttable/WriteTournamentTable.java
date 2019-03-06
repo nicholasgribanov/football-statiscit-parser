@@ -2,7 +2,6 @@ package tournamenttable;
 
 import game.TournamentTable;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -11,7 +10,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import player.Parser;
+import xls.DocumentXls;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,52 +21,16 @@ import java.util.List;
 
 public class WriteTournamentTable {
     public static void main(String[] args) throws IOException {
-        Parser parser = new Parser();
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Tables");
 
-        HSSFCellStyle style = createStyleForTitle(workbook);
+        HSSFCellStyle style = DocumentXls.createStyleForTitle(workbook);
         int rownum = 0;
         Row row;
         row = sheet.createRow(rownum);
         Cell cell;
-        cell = row.createCell(0, CellType.STRING);
-        cell.setCellValue("Тур");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(1, CellType.STRING);
-        cell.setCellValue("Команда");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(2, CellType.STRING);
-        cell.setCellValue("Позиция");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(3, CellType.STRING);
-        cell.setCellValue("Выиграно игр");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(4, CellType.STRING);
-        cell.setCellValue("Ничья");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(5, CellType.STRING);
-        cell.setCellValue("Проиграно игр");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(6, CellType.STRING);
-        cell.setCellValue("Забито голов");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(7, CellType.STRING);
-        cell.setCellValue("Пропущено голов");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(8, CellType.STRING);
-        cell.setCellValue("Очки");
-        cell.setCellStyle(style);
-
+        DocumentXls.generateDocumentHeader(style, row, "Тур", "Команда", "Позиция","Выиграно игр","Ничья","Проиграно игр","Забито голов","Пропущено голов","Очки");
 
         int i = 1;
         int count = 0;
@@ -93,7 +56,7 @@ public class WriteTournamentTable {
                     tournamentTables.add(tournamentTable);
                 });
 
-                for (TournamentTable tt: tournamentTables){
+                for (TournamentTable tt : tournamentTables) {
                     rownum++;
                     row = sheet.createRow(rownum);
                     cell = row.createCell(0, CellType.STRING);
@@ -123,7 +86,7 @@ public class WriteTournamentTable {
                     cell = row.createCell(8, CellType.STRING);
                     cell.setCellValue(tt.getPoints());
                 }
-                System.out.println("Parsed " + i+ " : " + ++count);
+                System.out.println("Parsed " + i + " : " + ++count);
                 i++;
 
             } catch (HttpStatusException e) {
@@ -140,16 +103,17 @@ public class WriteTournamentTable {
         try {
             if (os.contains("win")) {
                 File file = new File("C:/demo/Tour.xls");
-                writeToFile(workbook,file);
+                writeToFile(workbook, file);
             } else {
                 File file = new File("/Users/nicholasg/Tour.xls");
-                writeToFile(workbook,file);
+                writeToFile(workbook, file);
             }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 
     private static void writeToFile(HSSFWorkbook workbook, File file) throws IOException {
         file.getParentFile().mkdirs();
@@ -158,13 +122,5 @@ public class WriteTournamentTable {
         System.out.println("Created file: " + file.getAbsolutePath());
     }
 
-    public static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        return style;
 
-
-    }
 }

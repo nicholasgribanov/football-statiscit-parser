@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import player.Match;
 import player.Parser;
+import xls.DocumentXls;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,133 +33,19 @@ public class WriteStatistic {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Game");
 
-        HSSFCellStyle style = createStyleForTitle(workbook);
+        HSSFCellStyle style = DocumentXls.createStyleForTitle(workbook);
         int rownum = 0;
         final Row[] row = new Row[1];
         row[0] = sheet.createRow(rownum);
         final Cell[] cell = new Cell[1];
-        cell[0] = row[0].createCell(0, CellType.STRING);
-        cell[0].setCellValue("Дата");
-        cell[0].setCellStyle(style);
+        DocumentXls.generateDocumentHeader(style, row[0], "Дата", "Матч", "Команда", "Голы", "забитые правой ногой",
+                "забитые левой ногой", "забитые другой частью тела", "забитые головой", "Удар(ы) по воротам",
+                "в створ ворот", "в штангу", "в перекладину", "в сторону ворот (мимо ворот)", "блокированные",
+                "со стандартного положения", "после розыгрыша стандартного положения", "из штрафной",
+                "из-за штрафной", "точности ударов", "Удары отраженные вратарем", "отбитые", "пойманные",
+                "Угловые", "Офсайды", "Предупреждения", "Замены", "% владения мячом", "% точных передач",
+                "опасные моменты", "нарушения", "Удаления");
 
-        cell[0] = row[0].createCell(1, CellType.STRING);
-        cell[0].setCellValue("Матч");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(2, CellType.STRING);
-        cell[0].setCellValue("Команда");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(3, CellType.STRING);
-        cell[0].setCellValue("Голы");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(4, CellType.STRING);
-        cell[0].setCellValue("забитые правой ногой");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(5, CellType.STRING);
-        cell[0].setCellValue("забитые левой ногой");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(6, CellType.STRING);
-        cell[0].setCellValue("забитые другой частью тела");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(7, CellType.STRING);
-        cell[0].setCellValue("забитые головой");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(8, CellType.STRING);
-        cell[0].setCellValue("Удар(ы) по воротам");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(9, CellType.STRING);
-        cell[0].setCellValue("в створ ворот");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(10, CellType.STRING);
-        cell[0].setCellValue("в штангу");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(11, CellType.STRING);
-        cell[0].setCellValue("в перекладину");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(12, CellType.STRING);
-        cell[0].setCellValue("в сторону ворот (мимо ворот)");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(13, CellType.STRING);
-        cell[0].setCellValue("блокированные");
-        cell[0].setCellStyle(style);
-        cell[0] = row[0].createCell(14, CellType.STRING);
-        cell[0].setCellValue("со стандартного положения");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(15, CellType.STRING);
-        cell[0].setCellValue("после розыгрыша стандартного положения");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(16, CellType.STRING);
-        cell[0].setCellValue("из штрафной");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(17, CellType.STRING);
-        cell[0].setCellValue("из-за штрафной");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(18, CellType.STRING);
-        cell[0].setCellValue("точности ударов");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(19, CellType.STRING);
-        cell[0].setCellValue("Удары отраженные вратарем");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(20, CellType.STRING);
-        cell[0].setCellValue("отбитые");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(21, CellType.STRING);
-        cell[0].setCellValue("пойманные");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(22, CellType.STRING);
-        cell[0].setCellValue("Угловые");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(23, CellType.STRING);
-        cell[0].setCellValue("Офсайды");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(24, CellType.STRING);
-        cell[0].setCellValue("Предупреждения");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(25, CellType.STRING);
-        cell[0].setCellValue("Замены");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(26, CellType.STRING);
-        cell[0].setCellValue("% владения мячом");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(27, CellType.STRING);
-        cell[0].setCellValue("% точных передач");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(28, CellType.STRING);
-        cell[0].setCellValue("опасные моменты");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(29, CellType.STRING);
-        cell[0].setCellValue("нарушения");
-        cell[0].setCellStyle(style);
-
-        cell[0] = row[0].createCell(30, CellType.STRING);
-        cell[0].setCellValue("Удаления");
-        cell[0].setCellStyle(style);
 
         int count = 0;
 
@@ -252,11 +139,4 @@ public class WriteStatistic {
         System.out.println("Created file: " + file.getAbsolutePath());
     }
 
-    public static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        return style;
-    }
 }
