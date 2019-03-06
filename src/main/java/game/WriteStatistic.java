@@ -26,7 +26,7 @@ public class WriteStatistic {
         Match match = new Match();
         Parser parser = new Parser();
 
-        int i = 1380548325;
+        int i = 1380660295;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Game");
@@ -159,12 +159,36 @@ public class WriteStatistic {
         cell[0].setCellValue("Удаления");
         cell[0].setCellStyle(style);
 
+        cell[0] = row[0].createCell(31, CellType.STRING);
+        cell[0].setCellValue("Положение после тура");
+        cell[0].setCellStyle(style);
+
+        cell[0] = row[0].createCell(32, CellType.STRING);
+        cell[0].setCellValue("Очки");
+        cell[0].setCellStyle(style);
+
         int count = 0;
 
-        while (i <= 1380550640) {
+        while (i <= 1380660438) {
             try {
-                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_11481/game_" + i)
+                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
                         .get();
+
+                List<TournamentTable> tournamentTables = new ArrayList<>();
+                doc.getElementsByClass("global-table show-t").first().getElementsByTag("tbody").first().getElementsByTag("tr").forEach(element -> {
+                    TournamentTable tournamentTable = new TournamentTable();
+                    tournamentTable.setPosition(element.text().split(" ")[0]);
+                    tournamentTable.setTeam(element.getElementsByClass("info table-link").first().text());
+                    String[] texts = element.getElementsByClass("val-t").text().split(" ");
+                    tournamentTable.setTourNumber(texts[0]);
+                    tournamentTable.setWinGames(texts[1].split("/")[0]);
+                    tournamentTable.setDrawGames(texts[1].split("/")[1]);
+                    tournamentTable.setLoseGames(texts[1].split("/")[2]);
+                    tournamentTable.setGoalBalls(texts[2].split("-")[0]);
+                    tournamentTable.setMissedBalls(texts[2].split("-")[1]);
+                    tournamentTable.setPoints(texts[3]);
+                    tournamentTables.add(tournamentTable);
+                });
 
                 match.setHomeTeam(parser.parseHomeTeam(doc));
                 match.setHostTeam(parser.parseHostTeam(doc));
@@ -192,6 +216,12 @@ public class WriteStatistic {
                 });
                 map1.remove("с игры");
                 map2.remove("с игры");
+
+                map1.put("Положение после тура", tournamentTables.stream().filter(tt -> tt.getTeam().equals(map1.get("Команда"))).findFirst().get().getPosition());
+                map2.put("Положение после тура", tournamentTables.stream().filter(tt -> tt.getTeam().equals(map2.get("Команда"))).findFirst().get().getPosition());
+                map1.put("Очки", tournamentTables.stream().filter(tt -> tt.getTeam().equals(map1.get("Команда"))).findFirst().get().getPoints());
+                map2.put("Очки", tournamentTables.stream().filter(tt -> tt.getTeam().equals(map2.get("Команда"))).findFirst().get().getPoints());
+
                 List<Map<String, String>> list = new ArrayList<>();
                 list.add(map1);
                 list.add(map2);
@@ -227,7 +257,7 @@ public class WriteStatistic {
         }
 
 
-        File file = new File("/Users/nicholasg/Matches.xls");
+        File file = new File("C:/demo/Matches.xls");
         file.getParentFile().mkdirs();
         FileOutputStream outFile = new FileOutputStream(file);
         workbook.write(outFile);
