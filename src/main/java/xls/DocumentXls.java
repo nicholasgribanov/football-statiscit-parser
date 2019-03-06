@@ -13,28 +13,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class DocumentXls {
-    /**
-     * Added bold-font to header in style tytle
-     *
-     * @param workbook
-     * @return
-     */
-    public static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        return style;
-    }
 
     /**
      * Generate xls-header for each names
      *
-     * @param style
+     * @param workbook
      * @param row
      * @param names
      */
-    public static void generateDocumentHeader(HSSFCellStyle style, Row row, String... names) {
+    public static void generateDocumentHeader(HSSFWorkbook workbook, Row row, String... names) {
+        HSSFCellStyle style = createStyleForTitle(workbook);
         Cell cell;
         int i = 0;
         for (String name : names) {
@@ -43,6 +31,20 @@ public class DocumentXls {
             cell.setCellStyle(style);
             i++;
         }
+    }
+
+    /**
+     * Added bold-font to header in style tytle
+     *
+     * @param workbook
+     * @return
+     */
+    private static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
+        HSSFFont font = workbook.createFont();
+        font.setBold(true);
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        return style;
     }
 
     /**

@@ -1,6 +1,5 @@
 package game;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,6 +13,7 @@ import org.jsoup.select.Elements;
 import player.Match;
 import player.Parser;
 import xls.DocumentXls;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -28,12 +28,11 @@ public class WriteStatistic {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Game");
 
-        HSSFCellStyle style = DocumentXls.createStyleForTitle(workbook);
         int rownum = 0;
         final Row[] row = new Row[1];
         row[0] = sheet.createRow(rownum);
         final Cell[] cell = new Cell[1];
-        DocumentXls.generateDocumentHeader(style, row[0], "Дата", "Матч", "Команда", "Голы", "забитые правой ногой",
+        DocumentXls.generateDocumentHeader(workbook, row[0], "Дата", "Матч", "Команда", "Голы", "забитые правой ногой",
                 "забитые левой ногой", "забитые другой частью тела", "забитые головой", "Удар(ы) по воротам",
                 "в створ ворот", "в штангу", "в перекладину", "в сторону ворот (мимо ворот)", "блокированные",
                 "со стандартного положения", "после розыгрыша стандартного положения", "из штрафной",
