@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class WriterExel {
     public static void main(String[] args) throws IOException, InterruptedException {
         Match match = new Match();
         Parser parser = new Parser();
-        int i = 1380548325;
+        int i = 1380660431;
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Players");
@@ -63,10 +64,10 @@ public class WriterExel {
         cell.setCellStyle(style);
 
         int count = 0;
-        while (i <= 1380550640) {
+        while (i <= 1380660431) {
             try {
-            Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_11481/game_" + i)
-                    .get();
+                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
+                        .get();
 
 
             doc.getElementsByClass("b-match__assists-right-block").remove();
@@ -157,13 +158,27 @@ public class WriterExel {
         }
 
 
-        File file = new File("/Users/nicholasg/Players.xls");
+        String os = System.getProperty("os.name").toLowerCase();
+        try {
+            if (os.contains("win")) {
+                File file = new File("C:/demo/Players.xls");
+                writeToFile(workbook,file);
+            } else {
+                File file = new File("/Users/nicholasg/Players.xls");
+                writeToFile(workbook,file);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void writeToFile(HSSFWorkbook workbook, File file) throws IOException {
         file.getParentFile().mkdirs();
         FileOutputStream outFile = new FileOutputStream(file);
         workbook.write(outFile);
         System.out.println("Created file: " + file.getAbsolutePath());
-
-
     }
 
 
