@@ -11,10 +11,6 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import xls.DocumentXls;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,28 +95,10 @@ public class WriteTournamentTable {
 
         }
 
-        String os = System.getProperty("os.name").toLowerCase();
-        try {
-            if (os.contains("win")) {
-                File file = new File("C:/demo/Tour.xls");
-                writeToFile(workbook, file);
-            } else {
-                File file = new File("/Users/nicholasg/Tour.xls");
-                writeToFile(workbook, file);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DocumentXls.saveDataInFile(workbook, "C:/demo/Tour.xls", "/Users/nicholasg/Tour.xls");
     }
 
 
-    private static void writeToFile(HSSFWorkbook workbook, File file) throws IOException {
-        file.getParentFile().mkdirs();
-        FileOutputStream outFile = new FileOutputStream(file);
-        workbook.write(outFile);
-        System.out.println("Created file: " + file.getAbsolutePath());
-    }
 
 
 }

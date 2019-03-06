@@ -1,7 +1,6 @@
 package game;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,10 +14,6 @@ import org.jsoup.select.Elements;
 import player.Match;
 import player.Parser;
 import xls.DocumentXls;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -114,29 +109,9 @@ public class WriteStatistic {
             }
         }
 
-
-        String os = System.getProperty("os.name").toLowerCase();
-        try {
-            if (os.contains("win")) {
-                File file = new File("C:/demo/Matches18tour.xls");
-                writeToFile(workbook, file);
-            } else {
-                File file = new File("/Users/nicholasg/Matches.xls");
-                writeToFile(workbook, file);
-            }
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DocumentXls.saveDataInFile(workbook, "C:/demo/Matches.xls", "/Users/nicholasg/Matches.xls");
 
     }
 
-    private static void writeToFile(HSSFWorkbook workbook, File file) throws IOException {
-        file.getParentFile().mkdirs();
-        FileOutputStream outFile = new FileOutputStream(file);
-        workbook.write(outFile);
-        System.out.println("Created file: " + file.getAbsolutePath());
-    }
 
 }

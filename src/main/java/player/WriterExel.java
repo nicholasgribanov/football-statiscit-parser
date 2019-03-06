@@ -1,7 +1,6 @@
 package player;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,10 +11,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import xls.DocumentXls;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,28 +127,9 @@ public class WriterExel {
             }
         }
 
-
-        String os = System.getProperty("os.name").toLowerCase();
-        try {
-            if (os.contains("win")) {
-                File file = new File("C:/demo/Players.xls");
-                writeToFile(workbook,file);
-            } else {
-                File file = new File("/Users/nicholasg/Players.xls");
-                writeToFile(workbook,file);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        DocumentXls.saveDataInFile(workbook, "C:/demo/Players.xls", "/Users/nicholasg/Players.xls");
 
     }
 
-    private static void writeToFile(HSSFWorkbook workbook, File file) throws IOException {
-        file.getParentFile().mkdirs();
-        FileOutputStream outFile = new FileOutputStream(file);
-        workbook.write(outFile);
-        System.out.println("Created file: " + file.getAbsolutePath());
-    }
 
 }
