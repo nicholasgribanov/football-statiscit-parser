@@ -36,7 +36,7 @@ public class Match {
 
     @Override
     public String toString() {
-        return homeTeam + " " + result + " " + hostTeam;
+        return homeTeam + " " + result.replaceAll("ДВ", "") + " " + hostTeam;
     }
 
     public GameStatisctic getGameStatisctic() {

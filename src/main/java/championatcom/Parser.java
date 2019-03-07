@@ -20,7 +20,7 @@ public class Parser {
     }
 
     public String parseDateOfMatch(Document doc) {
-       return doc.body().getElementsByClass("match-info__date fav-item js-fav-item").first().text();
+        return doc.body().getElementsByClass("match-info__date fav-item js-fav-item").first().text();
     }
 
     public String parseTour(Document doc) {
@@ -29,11 +29,9 @@ public class Parser {
 
     public List<Integer> parseCalendar(Document doc) {
         List<Integer> linksId = new ArrayList<>();
-        Elements elements =  doc.body().getElementsByClass("stat-results__link");
-        doc.body().getElementsByClass("stat-results__link").forEach(el->{
-            if(el.childNodeSize()!=0){
-            System.out.println(el.getElementsByTag("a").first().attr("href"));
-           linksId.add(Integer.valueOf(el.getElementsByTag("a").first().attr("href").split("/")[6]));
+        doc.body().getElementsByClass("stat-results__link").forEach(el -> {
+            if (el.childNodeSize() != 0) {
+                linksId.add(Integer.valueOf(el.getElementsByTag("a").first().attr("href").split("/")[6]));
             }
         });
         return linksId;

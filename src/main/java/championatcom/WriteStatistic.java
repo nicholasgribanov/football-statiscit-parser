@@ -25,7 +25,7 @@ public class WriteStatistic {
         Match match = new Match();
         Parser parser = new Parser();
 
-        Document cal = Jsoup.connect("https://www.championat.com/football/_france/tournament/2617/calendar/")
+        Document cal = Jsoup.connect("https://www.championat.com/football/_france/tournament/1032/calendar/")
                 .maxBodySize(Integer.MAX_VALUE).get();
         List<Integer> links = parser.parseCalendar(cal);
 
@@ -38,7 +38,7 @@ public class WriteStatistic {
         final Cell[] cell = new Cell[1];
 
         DocumentXls.generateDocumentHeader(workbook, row[0], "Тур", "Дата", "Матч", "Команда", "Голов", "Атаки", "Опасные атаки",
-                "Удары по воротам", "Удары в створ", "Фолы", "Угловые",
+                "Удары по воротам", "Удары в створ", "Штанги/перекладины", "Фолы", "Угловые",
                 "Офсайды", "% владения мячом", "Заблокированные удары", "Штрафные удары", "Удары от ворот",
                 "Ауты", "Предупреждения", "Удаления");
 
@@ -46,7 +46,7 @@ public class WriteStatistic {
         int errors = 0;
         for (int j : links) {
             try {
-                Document doc = Jsoup.connect("https://www.championat.com/football/_france/tournament/2617/match/" + j)
+                Document doc = Jsoup.connect("https://www.championat.com/football/_france/tournament/1032/match/" + j)
                         .get();
 
                 match.setHomeTeam(parser.parseHomeTeam(doc));
@@ -65,8 +65,8 @@ public class WriteStatistic {
                 map2.put("Дата", match.getMatchDate());
                 map1.put("Тур", match.getTour());
                 map2.put("Тур", match.getTour());
-                map1.put("Голов", match.getResult().split(":")[0].trim());
-                map2.put("Голов", match.getResult().split(":")[1].trim());
+                map1.put("Голов", match.getResult().split(":")[0].trim().replaceAll("ДВ",""));
+                map2.put("Голов", match.getResult().split(":")[1].trim().replaceAll("ДВ",""));
 
                 Elements element = doc.body().getElementsByClass("stat-graph");
                 Elements element1 = element.last().getElementsByClass("stat-graph__row");
@@ -108,7 +108,8 @@ public class WriteStatistic {
                 if (++errors > 10) break;
             }
         }
-        DocumentXls.saveDataInFile(workbook, "C:/demo/MatchesChampionatFrance.xls", "/Users/nicholasg/Matches.xls");
+        DocumentXls.saveDataInFile(workbook, "C:/demo/MatchesEngkang20162017.xls",
+                                                "/Users/nicholasg/MatchesFrance20142015.xls");
     }
 
     private static String getStatValue(Element el, String s) {
