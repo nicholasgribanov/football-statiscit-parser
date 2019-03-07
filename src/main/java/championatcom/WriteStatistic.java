@@ -25,9 +25,8 @@ public class WriteStatistic {
         Match match = new Match();
         Parser parser = new Parser();
 
-        Document cal = Jsoup.connect("https://www.championat.com/football/_england/tournament/2613/calendar/")
-        .maxBodySize(Integer.MAX_VALUE)
-                .proxy("chr-proxy.severstal.severstalgroup.com", 8080).get();
+        Document cal = Jsoup.connect("https://www.championat.com/football/_france/tournament/2617/calendar/")
+                .maxBodySize(Integer.MAX_VALUE).get();
         List<Integer> links = parser.parseCalendar(cal);
 
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -38,16 +37,16 @@ public class WriteStatistic {
         row[0] = sheet.createRow(rownum);
         final Cell[] cell = new Cell[1];
 
-        DocumentXls.generateDocumentHeader(workbook, row[0], "Тур", "Дата", "Матч", "Команда","Голов", "Атаки", "Опасные атаки",
+        DocumentXls.generateDocumentHeader(workbook, row[0], "Тур", "Дата", "Матч", "Команда", "Голов", "Атаки", "Опасные атаки",
                 "Удары по воротам", "Удары в створ", "Фолы", "Угловые",
                 "Офсайды", "% владения мячом", "Заблокированные удары", "Штрафные удары", "Удары от ворот",
                 "Ауты", "Предупреждения", "Удаления");
 
         int count = 0;
-
-        for (int j:links) {
+        int errors = 0;
+        for (int j : links) {
             try {
-                Document doc = Jsoup.connect("https://www.championat.com/football/_england/tournament/2613/match/"+j)
+                Document doc = Jsoup.connect("https://www.championat.com/football/_france/tournament/2617/match/" + j)
                         .get();
 
                 match.setHomeTeam(parser.parseHomeTeam(doc));
@@ -103,13 +102,13 @@ public class WriteStatistic {
 
             } catch (HttpStatusException e) {
                 System.out.println("Page " + j + " not found. Try next");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Something wrong with " + j);
                 e.printStackTrace();
+                if (++errors > 10) break;
             }
         }
-        DocumentXls.saveDataInFile(workbook, "C:/demo/MatchesChampionat.xls", "/Users/nicholasg/Matches.xls");
+        DocumentXls.saveDataInFile(workbook, "C:/demo/MatchesChampionatFrance.xls", "/Users/nicholasg/Matches.xls");
     }
 
     private static String getStatValue(Element el, String s) {
