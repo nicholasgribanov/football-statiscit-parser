@@ -1,4 +1,4 @@
-package game;
+package domain;
 
 public class TournamentTable {
     private String position;

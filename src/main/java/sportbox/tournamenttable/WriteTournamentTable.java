@@ -1,6 +1,6 @@
-package tournamenttable;
+package sportbox.tournamenttable;
 
-import game.TournamentTable;
+import domain.TournamentTable;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,17 +24,15 @@ public class WriteTournamentTable {
         Row row = sheet.createRow(0);
         DocumentXls.generateDocumentHeader(workbook, row, "Тур", "Команда", "Позиция", "Выиграно игр", "Ничья", "Проиграно игр", "Забито голов", "Пропущено голов", "Очки");
 
-        int i = 11;
+        int i = 1;
         int count = 0;
-
-        while (i <= 11) {
-
+        int rownum = 0;
+        while (i <= 2) {
             try {
-                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats?tour=" + i)
-                        .get();
+                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Evropejskie_chempionaty/Franciya/stats?tour=" + i).get();
 
                 List<TournamentTable> tournamentTables = getTournamentTables(doc);
-                addedParsedDataToXls(tournamentTables, sheet);
+                rownum = addedParsedDataToXls(tournamentTables, sheet, rownum);
 
                 System.out.println("Parsed " + i + " : " + ++count);
                 i++;
@@ -49,7 +47,7 @@ public class WriteTournamentTable {
 
         }
 
-        DocumentXls.saveDataInFile(workbook, "C:/demo/Tour.xls", "/Users/nicholasg/Tour.xls");
+        DocumentXls.saveDataInFile(workbook, "C:/demo/TourFrance.xls", "/Users/nicholasg/Tour.xls");
     }
 
     private static List<TournamentTable> getTournamentTables(Document doc) {
@@ -71,11 +69,10 @@ public class WriteTournamentTable {
         return tournamentTables;
     }
 
-    private static void addedParsedDataToXls(List<TournamentTable> tournamentTables, HSSFSheet sheet) {
-        int rownum = 1;
+    private static int addedParsedDataToXls(List<TournamentTable> tournamentTables, HSSFSheet sheet, int rownum) {
         for (TournamentTable tt : tournamentTables) {
+            rownum++;
             Row row = sheet.createRow(rownum);
-
             Cell cell;
             cell = row.createCell(0, CellType.STRING);
             cell.setCellValue(tt.getTourNumber());
@@ -104,8 +101,8 @@ public class WriteTournamentTable {
             cell = row.createCell(8, CellType.STRING);
             cell.setCellValue(tt.getPoints());
 
-            rownum++;
         }
+        return rownum;
     }
 
 

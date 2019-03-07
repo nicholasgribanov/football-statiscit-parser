@@ -1,4 +1,4 @@
-package player;
+package sportbox.player;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -8,6 +8,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import domain.Match;
+import domain.Player;
+import domain.Team;
 import xls.DocumentXls;
 
 import java.io.IOException;

@@ -1,6 +1,4 @@
-package player;
-
-import game.GameStatisctic;
+package domain;
 
 public class Match {
     private String homeTeam;
@@ -8,6 +6,7 @@ public class Match {
     private String result;
     private GameStatisctic gameStatisctic;
     private String matchDate;
+    private String tour;
 
 
     public String getHomeTeam() {
@@ -54,5 +53,13 @@ public class Match {
 
     public void setMatchDate(String matchDate) {
         this.matchDate = matchDate;
+    }
+
+    public String getTour() {
+        return tour;
+    }
+
+    public void setTour(String tour) {
+        this.tour = tour;
     }
 }

@@ -1,5 +1,6 @@
-package game;
+package championatcom;
 
+import domain.Match;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,12 +11,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import player.Match;
-import player.Parser;
 import xls.DocumentXls;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WriteStatistic {
     public static void main(String[] args) throws IOException {
@@ -23,7 +25,10 @@ public class WriteStatistic {
         Match match = new Match();
         Parser parser = new Parser();
 
-        int i = 1380660431;
+        Document cal = Jsoup.connect("https://www.championat.com/football/_england/tournament/2613/calendar/")
+        .maxBodySize(Integer.MAX_VALUE)
+                .proxy("chr-proxy.severstal.severstalgroup.com", 8080).get();
+        List<Integer> links = parser.parseCalendar(cal);
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Game");
@@ -32,32 +37,25 @@ public class WriteStatistic {
         final Row[] row = new Row[1];
         row[0] = sheet.createRow(rownum);
         final Cell[] cell = new Cell[1];
-        DocumentXls.generateDocumentHeader(workbook, row[0], "Дата", "Матч", "Команда", "Голы", "забитые правой ногой",
-                "забитые левой ногой", "забитые другой частью тела", "забитые головой", "Удар(ы) по воротам",
-                "в створ ворот", "в штангу", "в перекладину", "в сторону ворот (мимо ворот)", "блокированные",
-                "со стандартного положения", "после розыгрыша стандартного положения", "из штрафной",
-                "из-за штрафной", "точности ударов", "Удары отраженные вратарем", "отбитые", "пойманные",
-                "Угловые", "Офсайды", "Предупреждения", "Замены", "% владения мячом", "% точных передач",
-                "опасные моменты", "нарушения", "Удаления");
 
+        DocumentXls.generateDocumentHeader(workbook, row[0], "Тур", "Дата", "Матч", "Команда","Голов", "Атаки", "Опасные атаки",
+                "Удары по воротам", "Удары в створ", "Фолы", "Угловые",
+                "Офсайды", "% владения мячом", "Заблокированные удары", "Штрафные удары", "Удары от ворот",
+                "Ауты", "Предупреждения", "Удаления");
 
         int count = 0;
 
-        while (i <= 1380660431) {
+        for (int j:links) {
             try {
-                Document doc = Jsoup.connect("https://news.sportbox.ru/Vidy_sporta/Futbol/Russia/premier_league/stats/turnir_14586/game_" + i)
+                Document doc = Jsoup.connect("https://www.championat.com/football/_england/tournament/2613/match/"+j)
                         .get();
 
                 match.setHomeTeam(parser.parseHomeTeam(doc));
                 match.setHostTeam(parser.parseHostTeam(doc));
                 match.setResult(parser.parseResult(doc));
                 match.setMatchDate(parser.parseDateOfMatch(doc));
+                match.setTour(parser.parseTour(doc));
 
-                Elements element = doc.body().getElementsByClass("sb_c_stat_stat");
-
-                Elements element1 = element.first().getElementsByTag("tbody");
-
-                Element element2 = element1.first();
                 Map<String, String> map1 = new LinkedHashMap<>();
                 Map<String, String> map2 = new LinkedHashMap<>();
                 map1.put("Матч", match.toString());
@@ -66,14 +64,18 @@ public class WriteStatistic {
                 map2.put("Команда", match.getHostTeam());
                 map1.put("Дата", match.getMatchDate());
                 map2.put("Дата", match.getMatchDate());
+                map1.put("Тур", match.getTour());
+                map2.put("Тур", match.getTour());
+                map1.put("Голов", match.getResult().split(":")[0].trim());
+                map2.put("Голов", match.getResult().split(":")[1].trim());
 
-                Elements elements = element2.children();
-                element2.children().forEach(el -> {
-                    map1.put(el.getElementsByTag("th").first().text(), el.getElementsByTag("td").first().text());
-                    map2.put(el.getElementsByTag("th").first().text(), el.getElementsByTag("td").last().text());
+                Elements element = doc.body().getElementsByClass("stat-graph");
+                Elements element1 = element.last().getElementsByClass("stat-graph__row");
+                element1.forEach(el -> {
+                    map1.put(getStatValue(el, "stat-graph__title"), getStatValue(el, "stat-graph__value _left"));
+                    map2.put(getStatValue(el, "stat-graph__title"), getStatValue(el, "stat-graph__value _right"));
                 });
-                map1.remove("с игры");
-                map2.remove("с игры");
+
                 List<Map<String, String>> list = new ArrayList<>();
                 list.add(map1);
                 list.add(map2);
@@ -97,20 +99,25 @@ public class WriteStatistic {
                     });
                 }
 
-                System.out.println("Parsed " + i + " : " + ++count);
-                i++;
+                System.out.println("Parsed " + j + " : " + ++count);
+
             } catch (HttpStatusException e) {
-                System.out.println("Page " + i + " not found. Try next");
-                i++;
-            } catch (Exception e) {
-                System.out.println("Something wrong with " + i);
-                i++;
+                System.out.println("Page " + j + " not found. Try next");
+            }
+            catch (Exception e) {
+                System.out.println("Something wrong with " + j);
+                e.printStackTrace();
             }
         }
-
-        DocumentXls.saveDataInFile(workbook, "C:/demo/Matches.xls", "/Users/nicholasg/Matches.xls");
-
+        DocumentXls.saveDataInFile(workbook, "C:/demo/MatchesChampionat.xls", "/Users/nicholasg/Matches.xls");
     }
 
+    private static String getStatValue(Element el, String s) {
+        if (el.getElementsByClass(s).isEmpty()) {
+            s += " _empty";
+            return el.getElementsByClass(s).first().text();
+        }
+        return el.getElementsByClass(s).first().text();
+    }
 
 }

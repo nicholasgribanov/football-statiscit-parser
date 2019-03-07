@@ -1,4 +1,4 @@
-package player;
+package sportbox.player;
 
 import org.jsoup.nodes.Document;
 

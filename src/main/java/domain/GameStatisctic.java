@@ -1,4 +1,4 @@
-package game;
+package domain;
 
 public class GameStatisctic {
     private String goal;

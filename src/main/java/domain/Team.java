@@ -1,4 +1,4 @@
-package player;
+package domain;
 
 public class Team {
     private String name;
