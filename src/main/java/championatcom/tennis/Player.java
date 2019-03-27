@@ -2,6 +2,7 @@ package championatcom.tennis;
 
 public class Player {
     private String name;
+    private String englishName;
     private String dateOfBirth;
     private String height;
     private String weight;
@@ -54,5 +55,13 @@ public class Player {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
     }
 }

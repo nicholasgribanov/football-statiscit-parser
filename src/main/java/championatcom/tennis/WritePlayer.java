@@ -26,21 +26,24 @@ public class WritePlayer {
         row[0] = sheet.createRow(rownum);
         final Cell[] cell = new Cell[1];
 
-        DocumentXls.generateDocumentHeader(workbook, row[0], "Имя", "Дата рождения:", "Рост:", "Вес:", "Рука:", "Гражданство:");
+        DocumentXls.generateDocumentHeader(workbook, row[0], "Имя","Имя English", "Дата рождения:", "Рост:", "Вес:", "Рука:", "Гражданство:","Профессионал с","Лучшее место в карьере",
+                "Дата лучшего рейтинга","Место проживания","Место рождения", "Рейтинг ATP");
 
         int count = 0;
         int errors = 0;
-        int i = 1;
-        while (i < 4/*2698*/) {
+        int i = 500;
+        while (i < 1000) {
             try {
-                Document doc = Jsoup.connect("https://www.championat.com/tennis/player/" + i + ".html#profile")
-                        .proxy("chr-proxy.severstal.severstalgroup.com", 8080)
-                        .get();
+                Document doc = Jsoup.connect("https://www.championat.com/tennis/player/" + i + ".html#profile").get();
 
                 String name = parser.parseName(doc);
+                String engName = parser.parseEnglishName(doc);
                 Map<String, String> map1 = parser.parseData(doc);
+                Map<String,String> map2 = parser.parseStat(doc);
                 map1.put("Имя", name);
+                map1.put("Имя English", engName);
                 List<Map<String, String>> list = new ArrayList<>();
+                map1.putAll(map2);
                 list.add(map1);
 
                 for (Map<String, String> map : list) {
@@ -73,7 +76,7 @@ public class WritePlayer {
             i++;
         }
 
-        DocumentXls.saveDataInFile(workbook, "C:/demo/TennisPlayers.xls",
+        DocumentXls.saveDataInFile(workbook, "C:/demo/TennisPlayers2.xls",
                 "/Users/nicholasg/TennisPlayers.xls");
 
     }
